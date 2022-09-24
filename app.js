@@ -10,27 +10,42 @@ app.use(express.json())
 
 app.get('/api/contacts', async function (req, res) {
   const contactsList = await contactsFunc.listContacts();
-  // console.table(contactsList);
-  res.send(contactsList);
 
-  // res.status(200).json(contactsList)
+  // res.send(contactsList);
+
+  res.status(200).json(contactsList)
 })
 
-// app.get('/api/contacts/:id', async function (req, res) {
-//   const contactById = await contactsFunc.getContactById(id);
-//   // console.table(contactsList);
-//   res.send(contactById);
+app.get('/api/contacts/:id', async function (req, res) {
+  const { id } = req.params;
 
-//   // res.status(200).json(contactsList)
-// })
+  const contactById = await contactsFunc.getContactById(id);
+
+  res.status(200).json(contactById)
+})
 
 app.post('/api/contacts', async function (req, res) {
     const {name, email, phone} = req.body;
     const newContact = await contactsFunc.addContact(name, email, phone);
 
-    res.send(newContact);
+    res.status(201).json(newContact)
+})
 
-    // res.status(201).json(newContact)
+app.delete('/api/contacts/:id', async function (req, res) {
+  const { id } = req.params;
+
+  const deletedContactById = await contactsFunc.removeContact(id);
+
+  res.status(200).json({"message": "contact deleted"})
+})
+
+app.put('/api/contacts/:id', async function (req, res) {
+  const { id } = req.params;
+  const {name, email, phone} = req.body;
+
+  const updatedContact = await contactsFunc.updateContact(id, name, email, phone);
+
+  res.status(204).json(updatedContact)
 })
 
 
