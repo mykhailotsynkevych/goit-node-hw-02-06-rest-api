@@ -1,11 +1,5 @@
 [
   {
-    "id": "1",
-    "name": "Allen Raymond",
-    "email": "nulla.ante@vestibul.co.uk",
-    "phone": "(992) 914-3792"
-  },
-  {
     "id": "2",
     "name": "Chaim Lewis",
     "email": "dui.in@egetlacus.ca",
@@ -31,9 +25,9 @@
   },
   {
     "id": "6",
-    "name": "Abbot Franks",
-    "email": "scelerisque@magnis.org",
-    "phone": "(186) 568-3720"
+    "name": "test6",
+    "email": "test6&email",
+    "phone": "(294) 666666"
   },
   {
     "id": "7",
@@ -58,17 +52,5 @@
     "name": "Alec Howard",
     "email": "Donec.elementum@scelerisquescelerisquedui.net",
     "phone": "(748) 206-2688"
-  },
-  {
-    "id": "1092f06e-714c-42fd-a87b-dec8943c7151",
-    "name": "Misha",
-    "email": "misha@egetlacus.ca",
-    "phone": "(294) 840-6600"
-  },
-  {
-    "id": "2811621e-1dc5-4aec-8c38-54b115e5c320",
-    "name": "Roma",
-    "email": "roma@mail.ca",
-    "phone": "(294) 765-6600"
   }
 ]
