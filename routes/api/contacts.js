@@ -10,6 +10,11 @@ const {
   updateContact,
 } = require("../.././models/contacts");
 
+const {
+  schemaAdd,
+  schemaUpdate,
+} = require("../.././schemas/contacts-validation");
+
 router.get("/", async (req, res, next) => {
   try {
     const contactsList = await listContacts();
@@ -27,15 +32,20 @@ router.get("/:id", async (req, res, next) => {
     res.json(contactById);
   } catch (error) {
     res.status(404).json({ message: "Not found" });
-    
   }
 });
 
 router.post("/", async (req, res, next) => {
   const { name, email, phone } = req.body;
+  const { error } = schemaAdd.validate(req.body);
+
+  if (error) {
+    res.status(400).json({ message: "missing required name field" });
+  }
+
   const newContact = await addContact(name, email, phone);
 
-  res.status(201).json(id, newContact);
+  res.status(201).json(newContact);
 });
 
 router.delete("/:id", async function (req, res, next) {
@@ -51,6 +61,12 @@ router.delete("/:id", async function (req, res, next) {
 router.put("/:id", async (req, res, next) => {
   try {
     const { name, email, phone } = req.body;
+
+    const { error } = schemaUpdate.validate(req.body);
+
+    if (error) {
+      res.status(400).json({ message: "missing fields" });
+    }
     const updatedContact = await updateContact(
       req.params.id,
       name,
