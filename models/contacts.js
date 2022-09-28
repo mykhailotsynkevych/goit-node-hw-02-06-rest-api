@@ -14,12 +14,12 @@ const listContacts = async () => {
 
 const getContactById = async (id) => {
   const contactsList = await listContacts();
-  const contactEl = contactsList.filter((el) => el.id === id);
+  const contactEl = contactsList.find((el) => el.id === id);
+  // console.log(contactEl);
 
   if (!contactEl) {
     throw new Error({ message: "Not found" });
   }
-
   return contactEl;
 };
 
