@@ -15,11 +15,11 @@ const contactSchema = new Schema(
     favorite: {
       type: Boolean,
       default: false,
-    },
-  }
-    // { versionKey: false, timestamps: true }
+        },
+  },
+    { versionKey: false, timestamps: true }
 );
 
-const Contact = model('Contact', contactSchema);
+const Contact = model('db-contact', contactSchema);
 
 module.exports = Contact;

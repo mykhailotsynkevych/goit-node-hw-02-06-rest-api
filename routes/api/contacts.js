@@ -11,6 +11,14 @@ const {
 } = require("../.././models/contacts");
 
 const {
+ createContact,
+  // getContactById,
+  // removeContact,
+  // addContact,
+  // updateContact,
+} = require("../.././services/index");
+
+const {
   schemaAdd,
   schemaUpdate,
 } = require("../.././schemas/contacts-validation");
@@ -36,14 +44,14 @@ router.get("/:id", async (req, res, next) => {
 });
 
 router.post("/", async (req, res, next) => {
-  const { name, email, phone } = req.body;
+  // const { name, email, phone } = req.body;
   const { error } = schemaAdd.validate(req.body);
 
   if (error) {
     res.status(400).json({ message: "missing required name field" });
   }
 
-  const newContact = await addContact(name, email, phone);
+  const newContact = await createContact(req.body);
 
   res.status(201).json(newContact);
 });
