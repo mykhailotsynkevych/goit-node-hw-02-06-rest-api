@@ -1,14 +1,17 @@
 const { Schema, model } = require("mongoose");
+const { emailRegEx, passwordRegEx } = require("../constants");
 
 const userSchema = new Schema({
-  password: {
-    type: String,
-    required: [true, "Set password for user"],
-  },
   email: {
     type: String,
     required: [true, "Email is required"],
     unique: true,
+    match: [emailRegEx, "Not valid email"],
+  },
+  password: {
+    type: String,
+    required: [true, "Set password for user"],
+    match: [passwordRegEx, "Not valid password"],
   },
   subscription: {
     type: String,
@@ -16,12 +19,8 @@ const userSchema = new Schema({
     default: "starter",
   },
   token: String,
-  owner: {
-    type: SchemaTypes.ObjectId,
-    ref: "user",
-  },
 });
 
-const User = model("user", userSchema);
+const User = model("users", userSchema);
 
 module.exports = User;

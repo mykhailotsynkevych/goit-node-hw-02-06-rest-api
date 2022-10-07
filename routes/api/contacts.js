@@ -9,7 +9,7 @@ const {
   deleteContact,
   updateContact,
   updateStatusContact,
-} = require("../.././services/index");
+} = require("../.././services/contactService");
 
 const {
   schemaAdd,
