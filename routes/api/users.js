@@ -1,12 +1,12 @@
 const express = require("express");
 const userRouter = express.Router();
 
-const { register} = require('../.././services/authService');
+const { register, login} = require('../.././services/authService');
 
 const {
   registerSchema,
   loginSchema,
-} = require("../.././schemas/register-validation");
+} = require("../../schemas/auth-validation");
 
 userRouter.post("/register", async (req, res, next) => {
     try {
@@ -15,10 +15,8 @@ userRouter.post("/register", async (req, res, next) => {
     if (error) {
       res.status(400).json({ message: "Помилка від Joi або іншої бібліотеки валідації" });
     }
-    // validateSchema(registerSchema, req.body);
 
     const user = await register(req.body);
-    // const { password, ...user } = result.toObject();
 
     res.status(201).json(user);
   } catch (error) {

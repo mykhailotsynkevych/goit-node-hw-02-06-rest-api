@@ -1,7 +1,7 @@
 const User = require('../models/userModel');
 // const { createError } = require('../helpers');
 // const { notValidCredentials } = require('../constants');
-// const bcrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs');
 
 async function register(body) {
     const { email, password, subscription } = body;
@@ -11,12 +11,12 @@ async function register(body) {
         throw new Error (409, 'Email in use');
     }
 
-    // const salt = await bcrypt.genSalt(10);
-    // const hash = await bcrypt.hash(password, salt);
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(password, salt);
 
     const result = await User.create({
         email,
-        password,
+        password: hash,
         subscription
     });
 
@@ -25,29 +25,29 @@ async function register(body) {
     return newUser;
 }
 
-// async function login(body) {
-//     const { email, password } = body;
-//     const user = await User.findOne({ email });
+async function login(body) {
+    const { email, password } = body;
+    const user = await User.findOne({ email });
 
-//     if (!user) {
-//         throw createError(401, notValidCredentials);
-//     }
+    if (!user) {
+        throw createError(401, "Помилка від Joi або іншої бібліотеки валідації");
+    }
 
-//     const match = await bcrypt.compare(password, user.password);
+    const match = await bcrypt.compare(password, user.password);
 
-//     if (!match) {
-//         throw createError(401, notValidCredentials);
-//     }
+    if (!match) {
+        throw createError(401, "Помилка від Joi або іншої бібліотеки валідації");
+    }
 
-//     const { password: existingUserPassword, ...existingUser } = user.toObject()
+    const { password: existingUserPassword, ...existingUser } = user.toObject()
 
-//     return {
-//         user: existingUser,
-//         token: '4gg5g5g55g56g5',
-//     };
-// }
+    return {
+        user: existingUser,
+        token: '4gg5g5g55g56g5',
+    };
+}
 
 module.exports = {
     register,
-    // login
+    login
 };

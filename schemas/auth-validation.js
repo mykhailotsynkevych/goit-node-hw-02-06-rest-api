@@ -11,7 +11,10 @@ const registerSchema = Joi.object({
 });
 
 const loginSchema = Joi.object({
-    email: Joi.string().regex(emailRegEx).message('Not valid email').required(),
+    email: Joi.string()
+        .regex(emailRegEx)
+        .message('Not valid email')
+        .required(),
     password: Joi.string()
         .regex(passwordRegEx)
         .message('Not valid password')
