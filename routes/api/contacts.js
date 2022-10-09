@@ -16,6 +16,8 @@ const {
   schemaUpdate,
 } = require("../.././schemas/contacts-validation");
 
+const checkAuth = require("../.././middlewares/checkAuth");
+
 router.get("/", async (req, res, next) => {
   try {
     const contactsList = await getAllContacts();
@@ -36,7 +38,7 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
-router.post("/", async (req, res, next) => {
+router.post("/", checkAuth, async (req, res, next) => {
   // const { name, email, phone, favorite } = req.body;
   const { error } = schemaAdd.validate(req.body);
 
