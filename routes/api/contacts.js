@@ -18,9 +18,9 @@ const {
 
 const checkAuth = require("../.././middlewares/checkAuth");
 
-router.get("/", async (req, res, next) => {
+router.get("/", checkAuth, async (req, res, next) => {
   try {
-    const contactsList = await getAllContacts();
+    const contactsList = await getAllContacts(req.user.id);
 
     res.json(contactsList);
   } catch (error) {
@@ -28,7 +28,7 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.get("/:id", async (req, res, next) => {
+router.get("/:id", checkAuth, async (req, res, next) => {
   try {
     const contactById = await getContactById(req.params.id);
 
@@ -40,18 +40,20 @@ router.get("/:id", async (req, res, next) => {
 
 router.post("/", checkAuth, async (req, res, next) => {
   // const { name, email, phone, favorite } = req.body;
-  const { error } = schemaAdd.validate(req.body);
 
-  if (error) {
-    res.status(400).json({ message: "missing required name field" });
-  }
+  // if (error) {
+  //   res.status(400).json({ message: "missing required name field" });
+  // }
 
-  const newContact = await createContact(req.body);
+  const { user } = req;
 
+  schemaAdd.validate(req.body);
+
+  const newContact = await createContact({ ...req.body, owner: user.id });
   res.status(201).json(newContact);
 });
 
-router.delete("/:id", async function (req, res, next) {
+router.delete("/:id", checkAuth, async function (req, res, next) {
   try {
     await deleteContact(req.params.id);
 
@@ -61,7 +63,7 @@ router.delete("/:id", async function (req, res, next) {
   }
 });
 
-router.put("/:id", async (req, res, next) => {
+router.put("/:id", checkAuth, async (req, res, next) => {
   try {
     const { name, email, phone, favorite } = req.body;
 
@@ -84,7 +86,7 @@ router.put("/:id", async (req, res, next) => {
   }
 });
 
-router.patch("/:id/favorite", async (req, res, next) => {
+router.patch("/:id/favorite", checkAuth, async (req, res, next) => {
   try {
     // const { name, email, phone, favorite } = req.body;
     const { id } = req.params;

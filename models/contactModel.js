@@ -18,16 +18,12 @@ const contactSchema = new Schema(
     },
     owner: {
       type: SchemaTypes.ObjectId,
-      ref: "user",
+      ref: "users",
     },
   },
   {
     versionKey: false,
     timestamps: true,
-    // owner: {
-    //   type: SchemaTypes.ObjectId,
-    //   ref: "user",
-    // },
   }
 );
 

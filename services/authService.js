@@ -2,8 +2,8 @@ const User = require("../models/userModel");
 const createError = require("../helpers/createError");
 const bcrypt = require("bcryptjs");
 
-const { jwtSecret } = require('../config');
-const jwt = require('jsonwebtoken');
+const { jwtSecret } = require("../config");
+const jwt = require("jsonwebtoken");
 
 async function register(body) {
   const { email, password, subscription } = body;
@@ -41,8 +41,9 @@ async function login(body) {
     throw createError(401, "Email or password is wrong");
   }
 
-    const { password: existingUserPassword, subscription } = user.toObject();
-    const token = jwt.sign({ id: user._id }, jwtSecret, { expiresIn: '7 days' });
+  const { password: existingUserPassword, subscription } = user.toObject();
+  const token = jwt.sign({ id: user._id }, jwtSecret, { expiresIn: "7 days" });
+  await User.findByIdAndUpdate(user._id, { token }, { new: true });
 
   return {
     user: { email, subscription },
@@ -50,7 +51,32 @@ async function login(body) {
   };
 }
 
+async function logout(id) {
+  await User.findByIdAndUpdate(id, { token: "" });
+}
+
+async function current(body) {
+  const { token} = body;
+  const user = await User.findOne({ token});
+
+  // await User.findByIdAndUpdate(user._id, { token }, { new: true });
+  
+  // const user = await User.findById(id);
+  
+  if (!user) {
+    throw createError(401, "Not authorized");
+  }
+  
+  const { email, subscription } = user.toObject();
+  
+  return {
+    user: { email, subscription },
+  };
+}
+
 module.exports = {
   register,
   login,
+  logout,
+  current,
 };
