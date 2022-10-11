@@ -5,7 +5,7 @@ const {
   register,
   login,
   logout,
-  current,
+
 } = require("../.././services/authService");
 const checkAuth = require("../.././middlewares/checkAuth");
 
@@ -63,9 +63,9 @@ userRouter.post("/logout", checkAuth, async (req, res, next) => {
 
 userRouter.get("/current", checkAuth, async (req, res, next) => {
   try {
-    const user = await current(req.body);
+    const {email, subscription} = req.user;
 
-    res.status(200).json(user);
+    res.status(200).json({email, subscription});
   } catch (error) {
     next(error);
   }

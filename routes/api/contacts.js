@@ -39,12 +39,6 @@ router.get("/:id", checkAuth, async (req, res, next) => {
 });
 
 router.post("/", checkAuth, async (req, res, next) => {
-  // const { name, email, phone, favorite } = req.body;
-
-  // if (error) {
-  //   res.status(400).json({ message: "missing required name field" });
-  // }
-
   const { user } = req;
 
   schemaAdd.validate(req.body);
@@ -65,10 +59,10 @@ router.delete("/:id", checkAuth, async function (req, res, next) {
 
 router.put("/:id", checkAuth, async (req, res, next) => {
   try {
-    const { name, email, phone, favorite } = req.body;
-
+    const { name, email, phone, favorite} = req.body;
+    
     const { error } = schemaUpdate.validate(req.body);
-
+    
     if (error) {
       res.status(400).json({ message: "missing fields" });
     }
@@ -78,8 +72,8 @@ router.put("/:id", checkAuth, async (req, res, next) => {
       email,
       phone,
       favorite
-    );
-
+      );
+      
     res.json(updatedContact);
   } catch (error) {
     res.status(404).json({ message: "Not found" });

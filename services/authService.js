@@ -55,28 +55,8 @@ async function logout(id) {
   await User.findByIdAndUpdate(id, { token: "" });
 }
 
-async function current(body) {
-  const { token} = body;
-  const user = await User.findOne({ token});
-
-  // await User.findByIdAndUpdate(user._id, { token }, { new: true });
-  
-  // const user = await User.findById(id);
-  
-  if (!user) {
-    throw createError(401, "Not authorized");
-  }
-  
-  const { email, subscription } = user.toObject();
-  
-  return {
-    user: { email, subscription },
-  };
-}
-
 module.exports = {
   register,
   login,
   logout,
-  current,
 };
