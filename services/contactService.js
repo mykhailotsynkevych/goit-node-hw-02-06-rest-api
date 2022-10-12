@@ -14,16 +14,24 @@ async function getContactById(id) {
   return contact;
 }
 
-async function getAllContacts() {
-  return Contact.find();
+async function getAllContacts(owner) {
+  return Contact.find({ owner }).populate("owner");
 }
 
-async function deleteContact(id) {
-  await Contact.findByIdAndDelete(id);
+async function deleteContact(id, ownerId) {
+  await Contact.findOneAndDelete({
+    id,
+    owner: ownerId,
+  });
 }
 
-async function updateContact(id, body) {
-  return Contact.findByIdAndUpdate(id, body);
+async function updateContact(id, ownerId, body) {
+  return Contact.findOneAndUpdate(
+    {
+      id,
+      owner: ownerId,
+    }, {...body}, { new: true }
+  );
 }
 
 async function updateStatusContact(id, body) {

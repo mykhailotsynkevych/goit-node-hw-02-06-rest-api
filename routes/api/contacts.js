@@ -9,16 +9,18 @@ const {
   deleteContact,
   updateContact,
   updateStatusContact,
-} = require("../.././services/index");
+} = require("../.././services/contactService");
 
 const {
   schemaAdd,
   schemaUpdate,
 } = require("../.././schemas/contacts-validation");
 
-router.get("/", async (req, res, next) => {
+const checkAuth = require("../.././middlewares/checkAuth");
+
+router.get("/", checkAuth, async (req, res, next) => {
   try {
-    const contactsList = await getAllContacts();
+    const contactsList = await getAllContacts(req.user.id);
 
     res.json(contactsList);
   } catch (error) {
@@ -26,7 +28,7 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.get("/:id", async (req, res, next) => {
+router.get("/:id", checkAuth, async (req, res, next) => {
   try {
     const contactById = await getContactById(req.params.id);
 
@@ -36,22 +38,19 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
-router.post("/", async (req, res, next) => {
-  // const { name, email, phone, favorite } = req.body;
-  const { error } = schemaAdd.validate(req.body);
+router.post("/", checkAuth, async (req, res, next) => {
+  const { user } = req;
 
-  if (error) {
-    res.status(400).json({ message: "missing required name field" });
-  }
+  schemaAdd.validate(req.body);
 
-  const newContact = await createContact(req.body);
-
+  const newContact = await createContact({ ...req.body, owner: user.id });
   res.status(201).json(newContact);
 });
 
-router.delete("/:id", async function (req, res, next) {
+router.delete("/:id", checkAuth, async function (req, res, next) {
   try {
-    await deleteContact(req.params.id);
+    const ownerId = req.user._id;
+    await deleteContact(req.params.id, ownerId);
 
     res.status(203).json({ message: "contact deleted" });
   } catch (error) {
@@ -59,32 +58,33 @@ router.delete("/:id", async function (req, res, next) {
   }
 });
 
-router.put("/:id", async (req, res, next) => {
+router.put("/:id", checkAuth, async (req, res, next) => {
   try {
-    const { name, email, phone, favorite } = req.body;
-
+    const { id } = req.params;
+    const ownerId = req.user._id;
+    console.log(ownerId);
+    const { name, email, phone, favorite} = req.body;
+    
+    // console.log(req.body);
     const { error } = schemaUpdate.validate(req.body);
-
+    
     if (error) {
       res.status(400).json({ message: "missing fields" });
     }
     const updatedContact = await updateContact(
-      req.params.id,
-      name,
-      email,
-      phone,
-      favorite
+      id, ownerId, { name, email, phone, favorite}
     );
-
+    
+    // console.log(updatedContact);
+      
     res.json(updatedContact);
   } catch (error) {
     res.status(404).json({ message: "Not found" });
   }
 });
 
-router.patch("/:id/favorite", async (req, res, next) => {
+router.patch("/:id/favorite", checkAuth, async (req, res, next) => {
   try {
-    // const { name, email, phone, favorite } = req.body;
     const { id } = req.params;
     const { favorite = false } = req.body;
     const { error } = schemaUpdate.validate(req.body);
