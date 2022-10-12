@@ -18,15 +18,20 @@ async function getAllContacts(owner) {
   return Contact.find({ owner }).populate("owner");
 }
 
-async function deleteContact(id) {
+async function deleteContact(id, ownerId) {
   await Contact.findOneAndDelete({
     id,
-    owner: _id,
+    owner: ownerId,
   });
 }
 
-async function updateContact(id, body) {
-  return Contact.findOneAndUpdate(id, body, { new: true });
+async function updateContact(id, ownerId, body) {
+  return Contact.findOneAndUpdate(
+    {
+      id,
+      owner: ownerId,
+    }, {...body}, { new: true }
+  );
 }
 
 async function updateStatusContact(id, body) {

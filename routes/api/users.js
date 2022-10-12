@@ -19,9 +19,9 @@ userRouter.post("/register", async (req, res, next) => {
     const { error } = registerSchema.validate(req.body);
 
     if (error) {
-      res
+     return res
         .status(400)
-        .json({ message: "Помилка від Joi або іншої бібліотеки валідації" });
+        .json({ message: error.message });
     }
 
     const user = await register(req.body);
@@ -37,9 +37,9 @@ userRouter.post("/login", async (req, res, next) => {
     const { error } = loginSchema.validate(req.body);
 
     if (error) {
-      res
+      return res
         .status(400)
-        .json({ message: "Помилка від Joi або іншої бібліотеки валідації" });
+        .json({ message: error.message });
     }
 
     const result = await login(req.body);

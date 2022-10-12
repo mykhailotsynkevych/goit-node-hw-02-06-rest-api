@@ -49,7 +49,8 @@ router.post("/", checkAuth, async (req, res, next) => {
 
 router.delete("/:id", checkAuth, async function (req, res, next) {
   try {
-    await deleteContact(req.params.id);
+    const ownerId = req.user._id;
+    await deleteContact(req.params.id, ownerId);
 
     res.status(203).json({ message: "contact deleted" });
   } catch (error) {
@@ -59,20 +60,22 @@ router.delete("/:id", checkAuth, async function (req, res, next) {
 
 router.put("/:id", checkAuth, async (req, res, next) => {
   try {
+    const { id } = req.params;
+    const ownerId = req.user._id;
+    console.log(ownerId);
     const { name, email, phone, favorite} = req.body;
     
+    // console.log(req.body);
     const { error } = schemaUpdate.validate(req.body);
     
     if (error) {
       res.status(400).json({ message: "missing fields" });
     }
     const updatedContact = await updateContact(
-      req.params.id,
-      name,
-      email,
-      phone,
-      favorite
-      );
+      id, ownerId, { name, email, phone, favorite}
+    );
+    
+    // console.log(updatedContact);
       
     res.json(updatedContact);
   } catch (error) {
@@ -82,7 +85,6 @@ router.put("/:id", checkAuth, async (req, res, next) => {
 
 router.patch("/:id/favorite", checkAuth, async (req, res, next) => {
   try {
-    // const { name, email, phone, favorite } = req.body;
     const { id } = req.params;
     const { favorite = false } = req.body;
     const { error } = schemaUpdate.validate(req.body);
