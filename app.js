@@ -2,6 +2,18 @@ const express = require("express");
 const logger = require("morgan");
 const cors = require("cors");
 
+const multer = require('multer');
+const path = require("path");
+
+const avatarsDir = path.join(__dirname, "avatars");
+
+const multerConfig = multer.diskStorage({
+  destination: avatarsDir,
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  },
+});
+
 const contactsRouter = require("./routes/api/contacts");
 const usersRouter = require("./routes/api/users");
 
