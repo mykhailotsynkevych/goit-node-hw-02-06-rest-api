@@ -4,11 +4,11 @@ const { emailRegEx, passwordRegEx } = require("../constants");
 const registerSchema = Joi.object({
   email: Joi.string().regex(emailRegEx).message("Not valid email").required(),
   password: Joi.string()
-    .min(6)
-    .max(20)
+    .regex(passwordRegEx)
     .message("Not valid password")
     .required(),
   subscription: Joi.string(),
+  avatarURL: Joi.string(),
 });
 
 const loginSchema = Joi.object({
