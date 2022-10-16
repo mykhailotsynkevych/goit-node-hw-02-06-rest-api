@@ -15,7 +15,7 @@ async function register(body) {
     throw createError(409, "Email in use");
   }
   // const avatarURL = gravatar.url(email);
-  var avatarURL = gravatar.url(email, {protocol: 'http', s: '100'});
+  // var avatarURL = gravatar.url(email, {protocol: 'http', s: '100'});
 
   const salt = await bcrypt.genSalt(10);
   const hash = await bcrypt.hash(password, salt);
@@ -24,7 +24,7 @@ async function register(body) {
     email,
     password: hash,
     subscription,
-    avatarURL
+    avatarURL: gravatar.url(email, {protocol: 'http', s: '100'}),
   });
 
   const { password: newUserPassword, ...newUser } = result.toObject();
