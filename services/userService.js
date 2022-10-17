@@ -1,32 +1,37 @@
-const User = require('../models/userModel');
-const path = require('path');
-const fs = require('fs/promises');
+const User = require("../models/userModel");
+const path = require("path");
+const fs = require("fs/promises");
+
+const convertingAvatars = require('./convertingAvatars');
 
 async function uploadAvatar(id, data) {
-    const { path: tempDir, originalname = '' } = data;
-    // console.log(originalname);
-    // const extension = originalname.split('.').reverse()[0];
-    const [extension] = originalname.split('.').reverse();
-    const newFileName = `${id}.${extension}`;
-    const uploadDir = path.join(
-        __dirname,
-        '../',
-        'public',
-        'avatars',
-        newFileName
-    );
+    const { path: tempDir, originalname = ""} = data;
+    
+  const extension = originalname.split('.').reverse()[0];
+//   const [extension] = originalname.split(".").reverse();
+    
+  const newFileName = `${id}.${extension}`;
+  const uploadDir = path.join(
+    __dirname,
+    "../",
+    "public",
+    "avatars",
+    newFileName
+  );
 
-    await fs.rename(tempDir, uploadDir);
+  await convertingAvatars({ tempDir });
 
-    const user = await User.findByIdAndUpdate(
-        id,
-        { avatarURL: path.join('avatars', newFileName) },
-        { new: true }
-    );
+  await fs.rename(tempDir, uploadDir);
 
-    const { password, token, ...result } = user.toObject();
+  const user = await User.findByIdAndUpdate(
+    id,
+    { avatarURL: path.join("avatars", newFileName) },
+    { new: true }
+  );
 
-    return result;
+  const { password, token, ...result } = user.toObject();
+
+  return result;
 }
 
 module.exports = uploadAvatar;

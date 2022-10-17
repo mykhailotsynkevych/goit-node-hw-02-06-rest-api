@@ -1,9 +1,6 @@
 const express = require("express");
 const userRouter = express.Router();
 
-// const fs = require("fs/promises");
-// const path = require("path");
-
 const { register, login, logout } = require("../.././services/authService");
 const uploadAvatar = require("../.././services/userService");
 const upload = require("../../middlewares/upload");
@@ -67,22 +64,20 @@ userRouter.get("/current", checkAuth, async (req, res, next) => {
   }
 });
 
-userRouter.patch("/avatars", checkAuth, upload.single("image"), async (req, res, next) => {
-  try {
-    // console.log(req.body);
-    // console.log(req.file);
+userRouter.patch(
+  "/avatars",
+  checkAuth,
+  upload.single("image"),
+  async (req, res, next) => {
+    try {
+      const user = await uploadAvatar(req.user.id, req.file);
 
-    // const { path: temFilePath, originalname } = req.file;
-    // const avatarsDir = path.join(__dirname, "../../public", "avatars", originalname);
-
-    // await fs.rename(temFilePath, avatarsDir);
-
-    const user = await uploadAvatar(req.user.id, req.file);
-
-    res.status(200).json(user);
-  } catch (error) {
-    next(error);
+      const { avatarURL } = user;
+      res.status(200).json({ avatarURL });
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 module.exports = userRouter;

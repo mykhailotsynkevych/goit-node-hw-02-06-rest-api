@@ -14,8 +14,6 @@ async function register(body) {
   if (user) {
     throw createError(409, "Email in use");
   }
-  // const avatarURL = gravatar.url(email);
-  // var avatarURL = gravatar.url(email, {protocol: 'http', s: '100'});
 
   const salt = await bcrypt.genSalt(10);
   const hash = await bcrypt.hash(password, salt);
