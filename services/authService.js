@@ -5,8 +5,10 @@ const bcrypt = require("bcryptjs");
 const { jwtSecret } = require("../config");
 const jwt = require("jsonwebtoken");
 
+var gravatar = require('gravatar');
+
 async function register(body) {
-  const { email, password, subscription } = body;
+  const { email, password, subscription} = body;
   const user = await User.findOne({ email });
 
   if (user) {
@@ -20,6 +22,7 @@ async function register(body) {
     email,
     password: hash,
     subscription,
+    avatarURL: gravatar.url(email, {protocol: 'http', s: '100'}),
   });
 
   const { password: newUserPassword, ...newUser } = result.toObject();

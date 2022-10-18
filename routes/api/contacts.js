@@ -62,10 +62,8 @@ router.put("/:id", checkAuth, async (req, res, next) => {
   try {
     const { id } = req.params;
     const ownerId = req.user._id;
-    console.log(ownerId);
     const { name, email, phone, favorite} = req.body;
     
-    // console.log(req.body);
     const { error } = schemaUpdate.validate(req.body);
     
     if (error) {
@@ -75,7 +73,6 @@ router.put("/:id", checkAuth, async (req, res, next) => {
       id, ownerId, { name, email, phone, favorite}
     );
     
-    // console.log(updatedContact);
       
     res.json(updatedContact);
   } catch (error) {
