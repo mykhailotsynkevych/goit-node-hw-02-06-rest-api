@@ -80,4 +80,17 @@ userRouter.patch(
   }
 );
 
+userRouter.get(
+  "/auth/verify/:verificationToken",
+  checkAuth,
+  async (req, res, next) => {
+    try {
+
+      res.status(200).json({ message: "Verification successful" });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 module.exports = userRouter;
