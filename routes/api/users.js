@@ -1,7 +1,13 @@
 const express = require("express");
 const userRouter = express.Router();
 
-const { register, login, logout } = require("../.././services/authService");
+const {
+  register,
+  login,
+  logout,
+  confirmEmail,
+  resendEmail,
+} = require("../.././services/authService");
 const uploadAvatar = require("../.././services/userService");
 const upload = require("../../middlewares/upload");
 const checkAuth = require("../.././middlewares/checkAuth");
@@ -10,6 +16,8 @@ const {
   registerSchema,
   loginSchema,
 } = require("../../schemas/auth-validation");
+
+const emailSchema = require("../../schemas/emailSchema");
 
 userRouter.post("/register", async (req, res, next) => {
   try {
@@ -85,6 +93,7 @@ userRouter.get(
   checkAuth,
   async (req, res, next) => {
     try {
+      await confirmEmail(req.params.verificationToken);
 
       res.status(200).json({ message: "Verification successful" });
     } catch (error) {
@@ -92,5 +101,21 @@ userRouter.get(
     }
   }
 );
+
+userRouter.post("/verify", async (req, res, next) => {
+  try {
+    const { error } = emailSchema.validate(req.body);
+
+    if (error) {
+      return res.status(400).json({ message: error.message });
+    }
+
+    await resendEmail(req.body.email);
+
+    res.status(200).json({ message: "Verification email sent" });
+  } catch (error) {
+    next(error);
+  }
+});
 
 module.exports = userRouter;
